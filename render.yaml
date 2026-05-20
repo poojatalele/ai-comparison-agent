@@ -1,0 +1,18 @@
+# Render Blueprint (Infrastructure as Code).
+#
+# If your Render service was created manually in the dashboard, copy the
+# buildCommand and startCommand below into the dashboard's settings instead —
+# render.yaml only auto-applies to Blueprint deployments.
+services:
+  - type: web
+    name: onpoint-price-agent
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn server.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      # Set the actual value in the Render dashboard (never commit secrets).
+      # Leave unset to run on built-in demo data.
+      - key: SERPAPI_KEY
+        sync: false
+      - key: PYTHON_VERSION
+        value: "3.11.9"

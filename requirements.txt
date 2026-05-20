@@ -1,0 +1,13 @@
+# Production / deployment install — one file installs the whole app:
+#
+#     pip install -r requirements.txt
+#
+# Use this as the build command on Render (and any other host). It installs
+# both layers of the project.
+
+# 1. The domain core: the `pricecompare` package + its dependency (httpx).
+#    Installed from the local ./backend directory via its pyproject.toml.
+./backend
+
+# 2. The web layer: FastAPI, Uvicorn, python-dotenv.
+-r server/requirements.txt
