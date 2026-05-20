@@ -33,7 +33,6 @@ class OfferOut(BaseModel):
     delivery: str | None = None
     is_best: bool
     is_recommended: bool
-    savings: float
     is_onpoint_partner: bool
     cashback_rate: float
     onpoints: int
@@ -53,7 +52,6 @@ class OfferOut(BaseModel):
             delivery=offer.delivery,
             is_best=offer.is_cheapest,
             is_recommended=offer.is_recommended,
-            savings=offer.savings,
             is_onpoint_partner=offer.is_reward_partner,
             cashback_rate=offer.reward_rate,
             onpoints=offer.reward_points,

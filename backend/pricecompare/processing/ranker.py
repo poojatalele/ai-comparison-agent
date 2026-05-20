@@ -1,7 +1,7 @@
 """`Ranker` — dedupes per retailer, sorts cheapest-first, annotates each offer.
 
-After this step every offer carries `is_cheapest` and `savings`, and the list
-is trimmed to a clean, scannable size.
+After this step every offer carries `is_cheapest`, and the list is trimmed to
+a clean, scannable size.
 """
 
 from __future__ import annotations
@@ -19,13 +19,9 @@ class Ranker(OfferProcessor):
     async def process(self, offers: list[Offer], query: ProductQuery) -> list[Offer]:
         ranked = self._dedupe_cheapest_per_store(offers)
         ranked.sort(key=lambda o: o.price)
-        if not ranked:
-            return ranked
 
-        highest = max(o.price for o in ranked)
         for index, offer in enumerate(ranked):
             offer.is_cheapest = index == 0          # list is price-sorted
-            offer.savings = round(highest - offer.price)
 
         return ranked[: self._max_results]
 

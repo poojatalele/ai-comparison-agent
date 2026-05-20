@@ -32,8 +32,7 @@ class ProductQuery:
 class OriginListing:
     """The store the user *came from* — the retailer behind a pasted URL.
 
-    Used to anchor the comparison ("you came from here") and to express each
-    offer's savings relative to where the user started. Carries reward fields
+    Used to anchor the comparison ("you came from here"). Carries reward fields
     too, so an origin that is itself a reward partner shows its cashback.
     """
 
@@ -66,7 +65,6 @@ class Offer:
 
     # --- derived, by the processing pipeline ---
     is_cheapest: bool = False
-    savings: float = 0.0
     is_reward_partner: bool = False
     reward_rate: float = 0.0     # cashback %, e.g. 6.75
     reward_points: int = 0       # onpoints earned (≈ rupee value of cashback)

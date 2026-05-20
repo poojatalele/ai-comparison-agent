@@ -98,21 +98,7 @@
 
   /* ---------------- rendering ---------------- */
 
-  // Savings shown per row: vs. the store the user came from when we know it,
-  // otherwise vs. the most expensive offer.
-  function savingsHtml(r, originPrice, originStore) {
-    if (originPrice && originPrice > 0) {
-      var delta = Math.round(originPrice - r.price_value);
-      if (delta > 0) return '<div class="save">save ' + rupee(delta) + " vs " + esc(originStore) + "</div>";
-      if (delta < 0) return '<div class="save more">' + rupee(-delta) + " more</div>";
-      return '<div class="save zero">same price</div>';
-    }
-    return r.savings > 0
-      ? '<div class="save">save ' + rupee(r.savings) + "</div>"
-      : '<div class="save zero">highest price</div>';
-  }
-
-  function rowHtml(r, originPrice, originStore) {
+  function rowHtml(r) {
     var bestTag = r.is_best ? '<span class="tag-best">BEST PRICE</span>' : "";
     var earn = r.onpoints
       ? '<div class="earn-line">◆ Earn ' + r.onpoints +
@@ -132,7 +118,6 @@
         "</div>" +
         '<div class="price-col">' +
           '<div class="amt">' + rupee(r.price_value) + "</div>" +
-          savingsHtml(r, originPrice, originStore) +
           '<a class="btn-buy" href="' + esc(r.link) + '" target="_blank" rel="noopener">Buy →</a>' +
         "</div>" +
       "</div>"
@@ -166,13 +151,13 @@
       "</div>";
   }
 
-  function sectionHtml(containerId, title, subtitle, offers, originPrice, originStore) {
+  function sectionHtml(containerId, title, subtitle, offers) {
     var el = document.getElementById(containerId);
     if (!offers.length) { el.innerHTML = ""; return; }
     el.innerHTML =
       '<div class="section-head"><h3>' + title + "</h3><span>" + subtitle + "</span></div>" +
       '<div class="rows">' +
-        offers.map(function (r) { return rowHtml(r, originPrice, originStore); }).join("") +
+        offers.map(function (r) { return rowHtml(r); }).join("") +
       "</div>";
   }
 
@@ -183,9 +168,6 @@
       show(errorEl);
       return;
     }
-
-    var originPrice = data.origin ? data.origin.price : null;
-    var originStore = data.origin ? data.origin.store : null;
 
     // --- product summary ---
     var p = data.product || {};
@@ -228,7 +210,7 @@
             partners[0].onpoints + " onpoints on this product</span>" +
         "</div>" +
         '<div class="onpoint-zone">' +
-          partners.map(function (r) { return rowHtml(r, originPrice, originStore); }).join("") +
+          partners.map(function (r) { return rowHtml(r); }).join("") +
         "</div>";
     } else {
       opEl.innerHTML =
@@ -246,12 +228,12 @@
     sectionHtml(
       "recommended-section", "Recommended retailers",
       recommended.length + " trusted stores · lowest price first",
-      recommended, originPrice, originStore
+      recommended
     );
     sectionHtml(
       "other-section", "Other stores",
       other.length + " more · lowest price first",
-      other, originPrice, originStore
+      other
     );
 
     document.getElementById("note").textContent =

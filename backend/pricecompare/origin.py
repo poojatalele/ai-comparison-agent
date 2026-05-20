@@ -1,8 +1,7 @@
 """`OriginScraper` — inspects the URL the user pasted.
 
 It identifies the *origin*: the store the user came from and, best-effort, the
-price shown there. This powers the "you came from here" anchor and lets the UI
-express each offer's saving relative to where the user started.
+price shown there. This powers the "you came from here" anchor.
 
 Price extraction prefers JSON-LD `Product.offers.price` (the SEO standard,
 reliably the *display* price) and falls back to Open Graph price meta tags.
