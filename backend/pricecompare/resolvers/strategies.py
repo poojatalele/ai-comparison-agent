@@ -19,8 +19,30 @@ import urllib.parse
 import httpx
 
 from ..models import ProductQuery, ResolvedVia
+from ..retailers import RetailerDirectory
 from ..web import BROWSER_HEADERS
 from .base import ProductResolver, is_url
+
+
+def _apply_brand(
+    text: str, raw_url: str, directory: RetailerDirectory | None
+) -> tuple[str, str | None]:
+    """Detect the brand from a pasted URL's domain and fold it into the query.
+
+    A brand-store URL's domain *is* the brand (e.g. forestessentialsindia.com →
+    "Forest Essentials"), but the slug/title rarely repeats it. Prepending it
+    keeps the price search on the exact product instead of every lookalike.
+    Returns `(query_text, brand)` — `brand` is `None` for marketplace/unknown
+    domains, which leaves matching lenient downstream.
+    """
+    if directory is None:
+        return text, None
+    brand = directory.brand_for_url(raw_url)
+    if not brand:
+        return text, None
+    if brand.lower() in text.lower():
+        return text, brand
+    return f"{brand} {text}"[:160], brand
 
 
 class PlainTextResolver(ProductResolver):
@@ -41,8 +63,11 @@ class UrlSlugResolver(ProductResolver):
     is already good), then lenient as a last-resort fallback.
     """
 
-    def __init__(self, min_words: int = 3) -> None:
+    def __init__(
+        self, min_words: int = 3, directory: RetailerDirectory | None = None
+    ) -> None:
         self._min_words = min_words
+        self._directory = directory
 
     async def resolve(self, raw_input: str) -> ProductQuery | None:
         raw = raw_input.strip()
@@ -50,8 +75,12 @@ class UrlSlugResolver(ProductResolver):
             return None
         slug = self._slug_from_url(raw)
         if slug and len(slug) > 4 and len(slug.split()) >= self._min_words:
+            text, brand = _apply_brand(slug, raw, self._directory)
             return ProductQuery(
-                text=slug, resolved_via=ResolvedVia.URL_SLUG, source_url=raw
+                text=text,
+                resolved_via=ResolvedVia.URL_SLUG,
+                source_url=raw,
+                brand=brand,
             )
         return None
 
@@ -96,8 +125,11 @@ class UrlSlugResolver(ProductResolver):
 class PageTitleResolver(ProductResolver):
     """Fetches the pasted page and reads its og:title / twitter:title / <title>."""
 
-    def __init__(self, timeout: float = 9.0) -> None:
+    def __init__(
+        self, timeout: float = 9.0, directory: RetailerDirectory | None = None
+    ) -> None:
         self._timeout = timeout
+        self._directory = directory
 
     async def resolve(self, raw_input: str) -> ProductQuery | None:
         raw = raw_input.strip()
@@ -106,10 +138,12 @@ class PageTitleResolver(ProductResolver):
         title = await self._fetch_title(raw)
         if not title:
             return None
+        text, brand = _apply_brand(self._clean_title(title), raw, self._directory)
         return ProductQuery(
-            text=self._clean_title(title),
+            text=text,
             resolved_via=ResolvedVia.PAGE_TITLE,
             source_url=raw,
+            brand=brand,
         )
 
     async def _fetch_title(self, url: str) -> str:

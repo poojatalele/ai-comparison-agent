@@ -49,6 +49,11 @@ class NoiseFilter(OfferProcessor):
         if len(kept) < 3:
             kept = list(offers)
 
+        # For a brand-anchored query, ProductMatcher (the next pipeline step)
+        # guarantees same-product results, so a wide price spread is genuine
+        # retailer variance — dropping "outliers" would discard real offers.
+        if query.brand:
+            return kept
         return self._drop_price_outliers(kept)
 
     def _drop_price_outliers(self, offers: list[Offer]) -> list[Offer]:

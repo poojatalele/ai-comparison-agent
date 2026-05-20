@@ -18,6 +18,7 @@ from pricecompare.origin import OriginScraper
 from pricecompare.processing import (
     NoiseFilter,
     ProcessingPipeline,
+    ProductMatcher,
     Ranker,
     RewardsEnricher,
     StoreNormalizer,
@@ -65,12 +66,14 @@ def _get_rewards() -> OnPointRewardsProvider:
 
 def _build_resolver(settings: Settings) -> QueryResolver:
     # Order matters: cheap checks first; the slow page fetch only when needed.
+    # The directory lets URL resolvers fold the brand into the search query.
+    directory = _get_directory()
     return QueryResolver(
         [
             PlainTextResolver(),                    # typed product names
-            UrlSlugResolver(min_words=3),           # strong URL slug -> skip fetch
-            PageTitleResolver(timeout=settings.http_timeout),
-            UrlSlugResolver(min_words=1),           # lenient slug fallback
+            UrlSlugResolver(min_words=3, directory=directory),  # strong slug
+            PageTitleResolver(timeout=settings.http_timeout, directory=directory),
+            UrlSlugResolver(min_words=1, directory=directory),  # lenient fallback
         ]
     )
 
@@ -95,6 +98,7 @@ def _build_pipeline(settings: Settings) -> ProcessingPipeline:
     return ProcessingPipeline(
         [
             NoiseFilter(),                          # drop accessories / refurb / outliers
+            ProductMatcher(),                       # keep only genuine same-product matches
             StoreNormalizer(_get_directory()),      # canonical names + trust tier + logos
             Ranker(max_results=settings.max_results),  # dedupe, sort, cap
             RewardsEnricher(_get_rewards()),        # add OnPoint cashback + onpoints

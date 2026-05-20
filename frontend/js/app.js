@@ -151,6 +151,44 @@
       "</div>";
   }
 
+  // Shown when a pasted product link resolved fine, but the exact product
+  // isn't sold at any other store. Keeps the "You came from here" origin
+  // card (and its OnPoint cashback); replaces the rest with a calm note.
+  function renderNotAvailable(data) {
+    var p = data.product || {};
+    var img = p.thumbnail
+      ? '<img src="' + esc(p.thumbnail) + '" alt="" onerror="this.style.display=\'none\'" />'
+      : "";
+    document.getElementById("summary").innerHTML =
+      img +
+      '<div class="meta">' +
+        "<b>" + esc(p.title || data.query) + "</b>" +
+        '<span class="via">Identified from the product URL</span>' +
+      "</div>";
+
+    renderOrigin(data.origin);
+
+    var store = esc((data.origin && data.origin.store) || "the original store");
+    var bestEl = document.getElementById("best");
+    bestEl.className = "best-banner not-found";
+    bestEl.innerHTML =
+      '<svg width="26" height="26" viewBox="0 0 24 24" fill="none">' +
+        '<circle cx="12" cy="12" r="9" stroke="#f0a830" stroke-width="2"/>' +
+        '<path d="M12 7.5v6M12 16.4v.2" stroke="#f0a830" stroke-width="2.4" stroke-linecap="round"/>' +
+      "</svg>" +
+      "<div><div class='big'>Not available at other stores</div>" +
+      "<small>The agent checked, but couldn't find this exact product anywhere " +
+      "else — it looks like " + store + " is the only store carrying it.</small></div>";
+
+    document.getElementById("onpoint-section").innerHTML = "";
+    document.getElementById("recommended-section").innerHTML = "";
+    document.getElementById("other-section").innerHTML = "";
+    document.getElementById("note").textContent = "";
+
+    hide(errorEl);
+    show(resultsEl);
+  }
+
   function sectionHtml(containerId, title, subtitle, offers) {
     var el = document.getElementById(containerId);
     if (!offers.length) { el.innerHTML = ""; return; }
@@ -164,6 +202,9 @@
   function render(data) {
     var results = data.results || [];
     if (!results.length) {
+      // A pasted brand-store link that no other store carries — a real
+      // answer, not an error. Keep the origin card, drop the comparison.
+      if (data.not_available && data.origin) { renderNotAvailable(data); return; }
       errorEl.textContent = "⚠️  No stores found for “" + data.query + "”. Try a more specific name.";
       show(errorEl);
       return;
@@ -192,7 +233,9 @@
 
     // --- cheapest banner ---
     var best = data.best || results[0];
-    document.getElementById("best").innerHTML =
+    var bestEl = document.getElementById("best");
+    bestEl.className = "best-banner";   // reset (a prior render may have set not-found)
+    bestEl.innerHTML =
       '<svg width="30" height="30" viewBox="0 0 24 24" fill="none"><path d="m12 2 3 6 6 1-4.5 4.3L17.5 20 12 16.8 6.5 20l1-6.7L3 9l6-1 3-6Z" fill="#51cf66"/></svg>' +
       "<div><div class='big'>Lowest price: <span>" + rupee(best.price_value) + "</span> at " + esc(best.platform) + "</div>" +
       "<small>Best of " + results.length + " stores the agent checked</small></div>";

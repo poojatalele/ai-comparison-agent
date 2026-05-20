@@ -107,6 +107,7 @@ class CompareResponse(BaseModel):
     onpoint: OnPointOut
     currency: str
     data_source: str
+    not_available: bool = False
 
     @classmethod
     def from_domain(cls, result: ComparisonResult) -> "CompareResponse":
@@ -129,4 +130,5 @@ class CompareResponse(BaseModel):
             ),
             currency=result.currency,
             data_source=result.data_source,
+            not_available=result.not_available,
         )

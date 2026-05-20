@@ -55,6 +55,10 @@ class PriceComparisonService:
         offers = await self._pipeline.run(search.offers, query)
         origin = await self._enrich_origin(origin)
 
+        # A brand-anchored URL that yielded no offers means the exact product
+        # isn't carried by any other store — a real answer, not an error.
+        not_available = bool(query.brand) and not offers and origin is not None
+
         return ComparisonResult(
             query=query,
             offers=offers,
@@ -62,6 +66,7 @@ class PriceComparisonService:
             reward_summary=self._summarize_rewards(offers),
             origin=origin,
             thumbnail=next((o.thumbnail for o in offers if o.thumbnail), None),
+            not_available=not_available,
         )
 
     async def _search_and_inspect(

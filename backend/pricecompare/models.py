@@ -26,6 +26,7 @@ class ProductQuery:
     text: str
     resolved_via: ResolvedVia
     source_url: str | None = None
+    brand: str | None = None     # set when resolved from a single-brand store URL
 
 
 @dataclass(frozen=True)
@@ -92,3 +93,4 @@ class ComparisonResult:
     origin: OriginListing | None = None
     thumbnail: str | None = None
     currency: str = "INR"
+    not_available: bool = False  # URL paste resolved, but no store carries it

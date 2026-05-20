@@ -98,7 +98,7 @@ class OriginScraper:
         )
 
     def _store_name(self, domain: str) -> str:
-        retailer = self._directory.match(domain)
+        retailer = self._directory.match_domain(domain)
         if retailer is not None:
             return retailer.canonical
         label = domain.split(".")[0]

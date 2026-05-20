@@ -147,6 +147,14 @@ img { display: block; }
 .best-banner .big { font-size: 23px; font-weight: 800; }
 .best-banner .big span { color: var(--good); }
 .best-banner small { color: var(--muted); display: block; font-weight: 600; }
+/* neutral amber variant — "not available at other stores" */
+.best-banner.not-found {
+  background: linear-gradient(120deg, rgba(240,168,48,.14), rgba(240,168,48,.04));
+  border-color: rgba(240,168,48,.34);
+  align-items: flex-start;
+}
+.best-banner.not-found .big { font-size: 18px; margin-bottom: 3px; }
+.best-banner.not-found small { line-height: 1.5; }
 
 /* store rows */
 .rows { display: flex; flex-direction: column; gap: 10px; }
