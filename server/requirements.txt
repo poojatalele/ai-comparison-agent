@@ -1,0 +1,7 @@
+# The domain core is installed separately and editable:
+#     pip install -e ./backend
+#
+# Web layer dependencies:
+fastapi>=0.110
+uvicorn[standard]>=0.29
+python-dotenv>=1.0

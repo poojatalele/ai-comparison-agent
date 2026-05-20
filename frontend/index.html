@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Compare Prices — OnPoint AI Price Agent</title>
+  <meta name="description" content="Paste any product link or search a name — OnPoint's AI agent finds the lowest price across every major Indian store." />
+  <link rel="icon" href="/assets/favicon.ico" />
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+
+  <!-- ===================== Header ===================== -->
+  <header class="hdr">
+    <div class="hdr-in">
+      <img class="hdr-logo" src="https://images.on-points.com/OnpointLogo.png" alt="OnPoint" />
+      <span class="hdr-tag">✨ AI Price Agent</span>
+    </div>
+  </header>
+
+  <!-- ===================== Hero ===================== -->
+  <section class="hero">
+    <div class="hero-in">
+      <span class="eyebrow">✨ POWERED BY ONPOINT</span>
+      <h1>Find the <em>lowest price</em>,<br />everywhere.</h1>
+      <p>Paste any product link or type a name. Our agent scans every major Indian
+         store, ranks them by price, and shows the onpoints you'd earn.</p>
+    </div>
+  </section>
+
+  <!-- ===================== Search ===================== -->
+  <div class="search-wrap">
+    <div class="search-card">
+      <div class="search-row">
+        <label class="search-input">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M11 4a7 7 0 1 0 4.9 12l4.6 4.6 1.4-1.4-4.6-4.6A7 7 0 0 0 11 4Zm0 2a5 5 0 1 1 0 10 5 5 0 0 1 0-10Z" fill="#7a7191"/>
+          </svg>
+          <input id="q" type="text" autocomplete="off"
+                 placeholder="Paste a product link  ·  or type a product name" />
+        </label>
+        <button id="go" class="btn-go">Compare Prices</button>
+      </div>
+      <div class="examples">
+        <span>Try:</span>
+        <button class="chip" data-q="Sony WH-1000XM5 Headphones">Sony WH-1000XM5</button>
+        <button class="chip" data-q="Apple iPhone 15 128GB">iPhone 15</button>
+        <button class="chip" data-q="Nike Revolution 7 Running Shoes">Nike Revolution 7</button>
+        <button class="chip" data-q="https://www.amazon.in/Sony-WH-1000XM5-Cancelling-Wireless-Headphones/dp/B09XS7JWHH">paste a product link</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== Results stage ===================== -->
+  <div class="stage">
+    <div id="loading" class="loader hidden">
+      <div class="lstep" data-step="0"><span class="dot">1</span> Identifying the product…</div>
+      <div class="lstep" data-step="1"><span class="dot">2</span> Searching Indian stores…</div>
+      <div class="lstep" data-step="2"><span class="dot">3</span> Ranking prices &amp; onpoints…</div>
+    </div>
+    <div id="error" class="errbox hidden"></div>
+    <div id="results" class="hidden">
+      <div id="summary" class="summary"></div>
+      <div id="origin"></div>
+      <div id="best" class="best-banner"></div>
+      <div id="onpoint-section"></div>
+      <div id="recommended-section"></div>
+      <div id="other-section"></div>
+      <p id="note" class="note"></p>
+    </div>
+  </div>
+
+  <!-- ===================== How it works ===================== -->
+  <section class="how">
+    <h2>How the agent works</h2>
+    <div class="how-grid">
+      <div class="how-card">
+        <div class="n">1</div>
+        <b>Identify</b>
+        <p>Paste a link and the agent reads the product page to extract the exact title — or just type the name yourself.</p>
+      </div>
+      <div class="how-card">
+        <div class="n">2</div>
+        <b>Scan everywhere</b>
+        <p>It queries Google Shopping across Amazon, Flipkart, Croma, Reliance Digital, Tata CLiQ and more — live prices in ₹.</p>
+      </div>
+      <div class="how-card">
+        <div class="n">3</div>
+        <b>Rank &amp; reward</b>
+        <p>Results are sorted cheapest-first, with the onpoints you'd earn buying through an OnPoint partner store.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== Footer ===================== -->
+  <footer class="ftr">
+    <div class="ftr-in">
+      <small>© 2026 OnPoint — Turn everyday shopping into big rewards.</small>
+      <small>Live prices via Google Shopping</small>
+    </div>
+  </footer>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>
