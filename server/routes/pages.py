@@ -20,6 +20,11 @@ def agent_page() -> FileResponse:
     return FileResponse(FRONTEND_DIR / "index.html")
 
 
+@router.get("/stores")
+def stores_page() -> FileResponse:
+    return FileResponse(FRONTEND_DIR / "stores.html")
+
+
 @router.get("/favicon.ico")
 def favicon() -> FileResponse:
     return FileResponse(FRONTEND_DIR / "assets" / "favicon.ico")

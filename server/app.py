@@ -10,23 +10,24 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
 from .paths import FRONTEND_DIR
-from .routes import api, pages
+from .routes import api, pages, stores
 
 
 def create_app() -> FastAPI:
     """Build and return the configured FastAPI application."""
     app = FastAPI(
-        title="OnPoint — AI Price Agent",
-        version="2.0.0",
+        title="OnPoint — Agentic Shopping Assistant",
+        version="3.0.0",
         description=(
-            "Compare a product's price across Indian retailers and see the "
-            "onpoints you'd earn on OnPoint partner stores."
+            "Compare a product's price across Indian retailers, see the onpoints "
+            "you'd earn, and find a brand's nearest physical store."
         ),
     )
 
     # Routes
     app.include_router(pages.router)
     app.include_router(api.router)
+    app.include_router(stores.router)
 
     # Static frontend assets
     app.mount("/css", StaticFiles(directory=FRONTEND_DIR / "css"), name="css")

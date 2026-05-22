@@ -1,7 +1,7 @@
 [project]
 name = "pricecompare"
-version = "2.0.0"
-description = "Extensible price-comparison agent core (framework-agnostic domain logic)"
+version = "3.0.0"
+description = "OnPoint agentic shopping assistant — framework-agnostic domain logic (price comparison + store locator)"
 requires-python = ">=3.10"
 dependencies = [
     "httpx>=0.27",
@@ -13,4 +13,4 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["pricecompare*"]
+include = ["pricecompare*", "storelocator*"]

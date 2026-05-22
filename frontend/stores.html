@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Find a Store — OnPoint Store Locator</title>
+  <meta name="description" content="Pick a brand and a city — find its nearest outlets with addresses, distance, and directions." />
+  <link rel="icon" href="/assets/favicon.ico" />
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+
+  <!-- ===================== Header ===================== -->
+  <header class="hdr">
+    <div class="hdr-in">
+      <img class="hdr-logo" src="https://images.on-points.com/OnpointLogo.png" alt="OnPoint" />
+      <nav class="hdr-nav">
+        <a href="/agent">Price Agent</a>
+        <a href="/stores" class="active">Store Locator</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ===================== Hero ===================== -->
+  <section class="hero">
+    <div class="hero-in">
+      <span class="eyebrow">📍 STORE LOCATOR</span>
+      <h1>Find a brand <em>near you</em>.</h1>
+      <p>Pick a brand and a city — we'll find its outlets, ranked by distance
+         from where you are, with addresses and one-tap directions.</p>
+    </div>
+  </section>
+
+  <!-- ===================== Search ===================== -->
+  <div class="search-wrap">
+    <div class="search-card">
+      <div class="store-form">
+        <div class="field">
+          <select id="brand" class="search-select" aria-label="Brand">
+            <option value="">Select a brand…</option>
+          </select>
+        </div>
+        <div class="field">
+          <input id="city" class="city-input" type="text" autocomplete="off"
+                 placeholder="City — e.g. Mumbai" />
+        </div>
+        <button id="go" class="btn-go">Find Stores</button>
+      </div>
+      <div class="examples">
+        <span>We'll ask for your location to measure exact distances — if you
+          skip it, distances are measured from the city centre.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== Results stage ===================== -->
+  <div class="stage">
+    <div id="loading" class="loader hidden">
+      <div class="lstep run on"><span class="dot"></span> Finding the nearest stores…</div>
+    </div>
+    <div id="error" class="errbox hidden"></div>
+    <div id="results" class="hidden">
+      <div id="earn-banner" class="earn-banner"></div>
+      <div id="ref-note" class="ref-note"></div>
+      <div id="store-head" class="section-head"></div>
+      <div id="store-rows" class="rows"></div>
+      <p id="note" class="note"></p>
+    </div>
+  </div>
+
+  <!-- ===================== Footer ===================== -->
+  <footer class="ftr">
+    <div class="ftr-in">
+      <small>© 2026 OnPoint — Turn everyday shopping into big rewards.</small>
+      <small>Store data via Google Places</small>
+    </div>
+  </footer>
+
+  <script src="/js/stores.js"></script>
+</body>
+</html>

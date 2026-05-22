@@ -38,6 +38,10 @@ from pricecompare.resolvers import (
 from pricecompare.retailers import RetailerDirectory
 from pricecompare.rewards import OnPointRewardsProvider
 from pricecompare.service import PriceComparisonService
+from storelocator.brands import BrandDirectory
+from storelocator.config import StoreLocatorSettings
+from storelocator.providers import GooglePlacesStoreLocator, MockStoreLocator
+from storelocator.service import StoreLocatorService
 
 
 @lru_cache
@@ -119,3 +123,32 @@ def get_service() -> PriceComparisonService:
         ),
         rewards=_get_rewards(),                     # also enriches the origin store
     )
+
+
+# --------------------------------------------------------------------------
+# Store locator — the brand-outlet-finder feature
+# --------------------------------------------------------------------------
+@lru_cache
+def get_store_settings() -> StoreLocatorSettings:
+    """Process-wide store-locator settings, read once from the environment."""
+    return StoreLocatorSettings.from_env()
+
+
+@lru_cache
+def get_store_service() -> StoreLocatorService:
+    """Build (once) the fully-wired `StoreLocatorService`.
+
+    Picks the live Google Places locator when a key is configured, else the
+    mock locator — the same graceful-degradation pattern as the price flow.
+    """
+    settings = get_store_settings()
+    if settings.live_enabled:
+        locator: GooglePlacesStoreLocator | MockStoreLocator = GooglePlacesStoreLocator(
+            api_key=settings.google_api_key,
+            timeout=settings.request_timeout,
+            region_code=settings.region_code,
+            max_stores=settings.max_stores,
+        )
+    else:
+        locator = MockStoreLocator()
+    return StoreLocatorService(locator=locator, brands=BrandDirectory())

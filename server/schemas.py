@@ -11,6 +11,7 @@ from __future__ import annotations
 from pydantic import BaseModel, Field
 
 from pricecompare.models import ComparisonResult, Offer, OriginListing
+from storelocator.models import StoreLocation, StoreLocatorResult
 
 
 class CompareRequest(BaseModel):
@@ -131,4 +132,75 @@ class CompareResponse(BaseModel):
             currency=result.currency,
             data_source=result.data_source,
             not_available=result.not_available,
+        )
+
+
+# ===========================================================================
+# Store locator — request/response for the brand-outlet-finder feature
+# ===========================================================================
+class StoreQueryRequest(BaseModel):
+    """Body of `POST /api/stores`."""
+
+    brand: str = Field(..., description="A supported brand name.")
+    city: str = Field(..., min_length=1, description="The city to search in.")
+    lat: float | None = Field(default=None, description="User latitude (browser GPS).")
+    lng: float | None = Field(default=None, description="User longitude (browser GPS).")
+
+
+class GeoOut(BaseModel):
+    lat: float
+    lng: float
+
+
+class StoreOut(BaseModel):
+    """One brand outlet, as sent to the browser."""
+
+    brand: str
+    name: str
+    address: str
+    lat: float
+    lng: float
+    place_id: str
+    rating: float | None = None
+    open_now: bool | None = None
+    distance_km: float | None = None
+
+    @classmethod
+    def from_store(cls, store: StoreLocation) -> "StoreOut":
+        return cls(
+            brand=store.brand,
+            name=store.name,
+            address=store.address,
+            lat=store.location.lat,
+            lng=store.location.lng,
+            place_id=store.place_id,
+            rating=store.rating,
+            open_now=store.open_now,
+            distance_km=store.distance_km,
+        )
+
+
+class StoreLocatorResponse(BaseModel):
+    """Body of a successful `POST /api/stores`."""
+
+    brand: str
+    city: str
+    earn_rate: float             # onpoints % earned with this brand
+    reference: GeoOut
+    reference_source: str        # "gps" | "city-centre"
+    store_count: int
+    stores: list[StoreOut]
+    data_source: str
+
+    @classmethod
+    def from_domain(cls, result: StoreLocatorResult) -> "StoreLocatorResponse":
+        return cls(
+            brand=result.brand,
+            city=result.city,
+            earn_rate=result.earn_rate,
+            reference=GeoOut(lat=result.reference.lat, lng=result.reference.lng),
+            reference_source=result.reference_source,
+            store_count=len(result.stores),
+            stores=[StoreOut.from_store(s) for s in result.stores],
+            data_source=result.data_source,
         )
